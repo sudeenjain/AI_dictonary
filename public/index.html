@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Dictionary Pro</title>
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="main-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-tabs">
+                <button class="tab-btn active" id="tabHistory"><i class="fa-solid fa-globe"></i> Global History</button>
+                <button class="tab-btn" id="tabFavorites"><i class="fa-solid fa-star"></i> My Favorites</button>
+            </div>
+            <div class="sidebar-content" id="contentHistory">
+                <ul id="historyList" class="history-list">
+                    <!-- History items populated by JS -->
+                </ul>
+            </div>
+            <div class="sidebar-content hidden" id="contentFavorites">
+                <div id="authWarning" class="auth-warning">
+                    <p><i class="fa-solid fa-lock"></i> Please log in to view favorites.</p>
+                </div>
+                <div id="favoritesContainer" class="hidden">
+                    <ul id="favoritesList" class="history-list"></ul>
+                    <button id="studyModeBtn" class="btn-primary study-btn">Practice Study Mode <i class="fa-solid fa-brain"></i></button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="app-container">
+            <div class="top-nav">
+                <div id="authContainer">
+                    <button class="btn-outline" id="loginBtn">Login / Register</button>
+                    <div id="userProfile" class="hidden">
+                        <span>Welcome, <b id="userNameDisplay">User</b></span>
+                        <button class="btn-text" id="logoutBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
+                    </div>
+                </div>
+            </div>
+            <header>
+                <h1><i class="fa-solid fa-book-open"></i> VoxDict <span class="badge-pro">PRO</span></h1>
+                <p>Advanced AI-Powered Dictionary</p>
+            </header>
+
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Search a word or tap microphone..." autocomplete="off">
+                    <button id="searchBtn" aria-label="Search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <div class="divider"></div>
+                    <button id="micBtn" class="mic-btn" aria-label="Voice Search">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                </div>
+                <div id="listeningIndicator" class="listening-indicator hidden">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <p>Listening...</p>
+                </div>
+            </div>
+
+            <div id="loadingIndicator" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Analyzing word...</p>
+            </div>
+
+            <div id="resultsContainer" class="results-container hidden">
+                <!-- Content will be populated by JS -->
+            </div>
+            
+            <div id="errorContainer" class="error-container hidden">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <p id="errorText">Something went wrong.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Background decoration -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-backdrop hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="authModalTitle">Login</h3>
+                <button class="close-modal" id="closeAuthModal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="btnShowLogin">Login</button>
+                <button class="auth-tab" id="btnShowRegister">Register</button>
+            </div>
+            <form id="authForm">
+                <input type="text" id="authUsername" placeholder="Username" required autocomplete="username">
+                <input type="password" id="authPassword" placeholder="Password" required autocomplete="current-password">
+                <button type="submit" class="btn-primary full-width modal-btn" id="authSubmitBtn">Login</button>
+                <p id="authError" class="error-text hidden"></p>
+                <p id="authSuccess" class="success-text hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Study Mode Modal -->
+    <div id="studyModal" class="modal-backdrop hidden">
+        <div class="modal study-modal">
+            <button class="close-modal" id="closeStudyModal"><i class="fa-solid fa-xmark"></i></button>
+            <div class="study-progress">Card <span id="studyCurrentIndex">1</span> of <span id="studyTotalCards">0</span></div>
+            <div class="flashcard-container" id="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <h2 id="studyWordFront">Word</h2>
+                        <p class="click-hint"><i class="fa-solid fa-hand-pointer"></i> Click to flip</p>
+                    </div>
+                    <div class="flashcard-back">
+                        <h3 id="studyWordBack">Word</h3>
+                        <p id="studyDefinitionBack" class="study-def">Definition here</p>
+                    </div>
+                </div>
+            </div>
+            <div class="study-controls">
+                <button class="btn-outline" id="studyPrevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                <button class="btn-primary" id="studyNextBtn">Next <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
