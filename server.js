@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (!process.env.VERCEL) {
+  require('dotenv').config();
+}
 
 const express = require('express');
 const cors = require('cors');
@@ -89,10 +91,8 @@ async function start() {
   }
 }
 
-if (process.env.VERCEL) {
-  module.exports = app;
-} else if (require.main === module) {
+module.exports = app;
+
+if (!process.env.VERCEL && require.main === module) {
   start();
-} else {
-  module.exports = app;
 }
