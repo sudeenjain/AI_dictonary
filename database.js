@@ -1,4 +1,3 @@
-const initSqlJs = require('sql.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -15,13 +14,20 @@ const DB_PATH = path.join(dataDir, 'database.sqlite');
 
 let db = null;
 
+async function loadSqlJs() {
+  if (isVercel) {
+    return require('sql.js/dist/sql-asm.js')();
+  }
+
+  const initSqlJs = require('sql.js');
+  const wasmPath = path.join(__dirname, 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
+  return initSqlJs({ locateFile: () => wasmPath });
+}
+
 async function getDb() {
   if (db) return db;
 
-  const wasmPath = path.join(__dirname, 'node_modules', 'sql.js', 'dist', 'sql-wasm.wasm');
-  const SQL = await initSqlJs({
-    locateFile: () => wasmPath
-  });
+  const SQL = await loadSqlJs();
 
   if (fs.existsSync(DB_PATH)) {
     const fileBuffer = fs.readFileSync(DB_PATH);
