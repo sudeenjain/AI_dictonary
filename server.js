@@ -12,6 +12,7 @@ const { apiLimiter } = require('./middleware/rateLimit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const publicDir = path.join(__dirname, 'public');
 let dbReady = false;
 
 app.set('trust proxy', 1);
@@ -59,7 +60,7 @@ app.use('/api', ensureDb, apiLimiter);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/dictionary', require('./routes/dictionary'));
 
-app.use(express.static(path.join(__dirname, 'public'), {
+app.use(express.static(publicDir, {
   maxAge: process.env.NODE_ENV === 'production' ? '1d' : 0,
   etag: true
 }));
@@ -72,7 +73,7 @@ app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 app.use((err, req, res, next) => {
