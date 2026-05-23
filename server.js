@@ -16,11 +16,13 @@ let dbReady = false;
 
 app.set('trust proxy', 1);
 
-app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginEmbedderPolicy: false
-}));
-app.use(compression());
+if (!process.env.VERCEL) {
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+  }));
+  app.use(compression());
+}
 app.use(cors({
   origin: process.env.CORS_ORIGIN || true,
   credentials: true
