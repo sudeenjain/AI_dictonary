@@ -30,6 +30,8 @@
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
     "node-fetch": "^3.3.2",
+    "serverless-http": "^4.0.0",
+    "serverless-http": "^3.2.0",
     "sql.js": "^1.14.1"
   },
   "devDependencies": {
