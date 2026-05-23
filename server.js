@@ -42,16 +42,16 @@ async function ensureDb(req, res, next) {
   }
 }
 
-app.use('/api', ensureDb, apiLimiter);
-
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     service: 'Lexis AI Dictionary',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    db: dbReady
   });
 });
 
+app.use('/api', ensureDb, apiLimiter);
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/dictionary', require('./routes/dictionary'));
 
@@ -64,7 +64,7 @@ app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send('User-agent: *\nAllow: /\n');
 });
 
-app.get('*', (req, res) => {
+app.use((req, res, next) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'Not found' });
   }
