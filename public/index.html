@@ -1,136 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice Dictionary Pro</title>
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lexis AI — Intelligent Dictionary</title>
+  <meta name="description" content="Lexis AI: An AI-powered dictionary with rich definitions, etymology, synonyms, voice search, and study mode. Powered by Groq and Gemini AI." />
+  <meta name="theme-color" content="#0d0f12" />
+  <meta name="keywords" content="AI dictionary, lexis, groq, gemini, etymology, synonyms" />
+  <meta property="og:title" content="Lexis AI — Intelligent Dictionary" />
+  <meta property="og:description" content="AI-powered dictionary with etymology, synonyms, voice search, and favorites." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="/favicon.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
 </head>
 <body>
-    <div class="main-wrapper">
-        <aside class="sidebar">
-            <div class="sidebar-tabs">
-                <button class="tab-btn active" id="tabHistory"><i class="fa-solid fa-globe"></i> Global History</button>
-                <button class="tab-btn" id="tabFavorites"><i class="fa-solid fa-star"></i> My Favorites</button>
-            </div>
-            <div class="sidebar-content" id="contentHistory">
-                <ul id="historyList" class="history-list">
-                    <!-- History items populated by JS -->
-                </ul>
-            </div>
-            <div class="sidebar-content hidden" id="contentFavorites">
-                <div id="authWarning" class="auth-warning">
-                    <p><i class="fa-solid fa-lock"></i> Please log in to view favorites.</p>
-                </div>
-                <div id="favoritesContainer" class="hidden">
-                    <ul id="favoritesList" class="history-list"></ul>
-                    <button id="studyModeBtn" class="btn-primary study-btn">Practice Study Mode <i class="fa-solid fa-brain"></i></button>
-                </div>
-            </div>
-        </aside>
+  <!-- Background -->
+  <div class="bg-grid"></div>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
 
-        <main class="app-container">
-            <div class="top-nav">
-                <div id="authContainer">
-                    <button class="btn-outline" id="loginBtn">Login / Register</button>
-                    <div id="userProfile" class="hidden">
-                        <span>Welcome, <b id="userNameDisplay">User</b></span>
-                        <button class="btn-text" id="logoutBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button>
-                    </div>
-                </div>
-            </div>
-            <header>
-                <h1><i class="fa-solid fa-book-open"></i> VoxDict <span class="badge-pro">PRO</span></h1>
-                <p>Advanced AI-Powered Dictionary</p>
-            </header>
-
-            <div class="search-section">
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Search a word or tap microphone..." autocomplete="off">
-                    <button id="searchBtn" aria-label="Search">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
-                    <div class="divider"></div>
-                    <button id="micBtn" class="mic-btn" aria-label="Voice Search">
-                        <i class="fa-solid fa-microphone"></i>
-                    </button>
-                </div>
-                <div id="listeningIndicator" class="listening-indicator hidden">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <p>Listening...</p>
-                </div>
-            </div>
-
-            <div id="loadingIndicator" class="loading hidden">
-                <div class="spinner"></div>
-                <p>Analyzing word...</p>
-            </div>
-
-            <div id="resultsContainer" class="results-container hidden">
-                <!-- Content will be populated by JS -->
-            </div>
-            
-            <div id="errorContainer" class="error-container hidden">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <p id="errorText">Something went wrong.</p>
-            </div>
-        </main>
+  <!-- Nav -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">⬡</span>
+      <span class="brand-text">Lexis<em>AI</em></span>
     </div>
-
-    <!-- Background decoration -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <!-- Auth Modal -->
-    <div id="authModal" class="modal-backdrop hidden">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="authModalTitle">Login</h3>
-                <button class="close-modal" id="closeAuthModal"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="auth-tabs">
-                <button class="auth-tab active" id="btnShowLogin">Login</button>
-                <button class="auth-tab" id="btnShowRegister">Register</button>
-            </div>
-            <form id="authForm">
-                <input type="text" id="authUsername" placeholder="Username" required autocomplete="username">
-                <input type="password" id="authPassword" placeholder="Password" required autocomplete="current-password">
-                <button type="submit" class="btn-primary full-width modal-btn" id="authSubmitBtn">Login</button>
-                <p id="authError" class="error-text hidden"></p>
-                <p id="authSuccess" class="success-text hidden"></p>
-            </form>
+    <div class="nav-actions">
+      <button class="btn btn-ghost btn-icon" id="themeToggle" type="button" aria-label="Toggle theme" title="Toggle theme">◐</button>
+      <button class="btn btn-ghost nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      <div id="authButtons" class="auth-buttons">
+        <button class="btn btn-ghost" onclick="showModal('loginModal')">Sign In</button>
+        <button class="btn btn-primary" onclick="showModal('registerModal')">Get Started</button>
+      </div>
+      <div id="userMenu" class="user-menu hidden">
+        <button class="btn btn-ghost" onclick="showView('favoritesView')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          Favorites
+        </button>
+        <button class="btn btn-ghost" onclick="showView('historyView')">History</button>
+        <div class="user-avatar" id="userAvatarBtn">
+          <span id="userInitial">U</span>
         </div>
+        <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+      </div>
     </div>
+  </nav>
 
-    <!-- Study Mode Modal -->
-    <div id="studyModal" class="modal-backdrop hidden">
-        <div class="modal study-modal">
-            <button class="close-modal" id="closeStudyModal"><i class="fa-solid fa-xmark"></i></button>
-            <div class="study-progress">Card <span id="studyCurrentIndex">1</span> of <span id="studyTotalCards">0</span></div>
-            <div class="flashcard-container" id="flashcard">
-                <div class="flashcard-inner">
-                    <div class="flashcard-front">
-                        <h2 id="studyWordFront">Word</h2>
-                        <p class="click-hint"><i class="fa-solid fa-hand-pointer"></i> Click to flip</p>
-                    </div>
-                    <div class="flashcard-back">
-                        <h3 id="studyWordBack">Word</h3>
-                        <p id="studyDefinitionBack" class="study-def">Definition here</p>
-                    </div>
-                </div>
-            </div>
-            <div class="study-controls">
-                <button class="btn-outline" id="studyPrevBtn"><i class="fa-solid fa-arrow-left"></i> Previous</button>
-                <button class="btn-primary" id="studyNextBtn">Next <i class="fa-solid fa-arrow-right"></i></button>
-            </div>
+  <!-- Main App -->
+  <main class="app-container">
+
+    <!-- Home View -->
+    <div id="homeView" class="view active">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          Powered by Groq & Gemini AI
         </div>
+        <h1 class="hero-title">
+          Every word has<br/>
+          <em>a story to tell.</em>
+        </h1>
+        <p class="hero-subtitle">
+          Discover deep definitions, etymology, synonyms, and cultural context—<br class="desktop-only"/>
+          all in one intelligent lookup.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+          <div class="search-bar" id="searchBar">
+            <div class="search-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </div>
+            <input
+              type="text"
+              id="searchInput"
+              class="search-input"
+              placeholder="Search any word..."
+              autocomplete="off"
+              spellcheck="false"
+              aria-label="Search word"
+            />
+            <button class="btn-mic" id="micBtn" type="button" aria-label="Voice search" title="Voice search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8"/></svg>
+            </button>
+            <div id="listeningIndicator" class="listening-indicator hidden" aria-live="polite">Listening…</div>
+            <button class="search-btn" id="searchBtn" onclick="searchWord()">
+              <span class="btn-text">Lookup</span>
+              <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div id="searchSuggestions" class="search-suggestions hidden"></div>
+        </div>
+
+        <!-- Quick words -->
+        <div class="quick-words">
+          <span class="quick-label">Try:</span>
+          <button class="quick-word" onclick="quickSearch('serendipity')">serendipity</button>
+          <button class="quick-word" onclick="quickSearch('ephemeral')">ephemeral</button>
+          <button class="quick-word" onclick="quickSearch('resilience')">resilience</button>
+          <button class="quick-word" onclick="quickSearch('enigma')">enigma</button>
+        </div>
+      </section>
+
+      <!-- Word of the Day -->
+      <section class="wotd-section" id="wotdSection">
+        <div class="section-label">Word of the Day</div>
+        <div class="wotd-card" id="wotdCard">
+          <div class="wotd-loading">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text short"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular Words -->
+      <section class="popular-section">
+        <div class="section-label">Trending</div>
+        <div class="popular-grid" id="popularGrid">
+          <div class="skeleton-pill"></div>
+          <div class="skeleton-pill"></div>
+          <div class="skeleton-pill"></div>
+          <div class="skeleton-pill"></div>
+          <div class="skeleton-pill"></div>
+        </div>
+      </section>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Result View -->
+    <div id="resultView" class="view">
+      <button class="back-btn" onclick="showView('homeView')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+
+      <!-- Search again -->
+      <div class="result-search">
+        <input type="text" id="resultSearchInput" class="result-search-input" placeholder="Search another word..." />
+        <button class="btn btn-primary btn-sm" onclick="searchWordFromResult()">Search</button>
+      </div>
+
+      <div id="wordResult" class="word-result">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Favorites View -->
+    <div id="favoritesView" class="view">
+      <button class="back-btn" onclick="showView('homeView')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        Back
+      </button>
+      <h2 class="view-title">My Favorites</h2>
+      <button class="btn btn-primary study-mode-btn hidden" id="studyModeBtn" type="button">Practice Study Mode</button>
+      <div id="favoritesList" class="favorites-list"></div>
+    </div>
+
+    <!-- History View -->
+    <div id="historyView" class="view">
+      <div class="view-header">
+        <button class="back-btn" onclick="showView('homeView')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </button>
+        <button class="btn btn-ghost btn-sm danger" onclick="clearHistory()">Clear All</button>
+      </div>
+      <h2 class="view-title">Search History</h2>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+  </main>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay hidden">
+    <div class="loading-card">
+      <div class="loading-orb"></div>
+      <div class="loading-text">
+        <div class="loading-title">Looking up your word</div>
+        <div class="loading-sub" id="loadingMsg">Consulting AI intelligence...</div>
+      </div>
+      <div class="loading-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-backdrop" onclick="hideModal('loginModal')"></div>
+    <div class="modal-card">
+      <button class="modal-close" onclick="hideModal('loginModal')">✕</button>
+      <div class="modal-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+      </div>
+      <h2 class="modal-title">Welcome back</h2>
+      <p class="modal-sub">Sign in to access your history and favorites</p>
+      <form onsubmit="login(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="loginUsername" class="form-input" placeholder="your username" required />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required />
+        </div>
+        <div id="loginError" class="form-error hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+      <p class="modal-footer">No account? <a href="#" onclick="switchModal('loginModal','registerModal')">Create one</a></p>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div id="registerModal" class="modal hidden">
+    <div class="modal-backdrop" onclick="hideModal('registerModal')"></div>
+    <div class="modal-card">
+      <button class="modal-close" onclick="hideModal('registerModal')">✕</button>
+      <div class="modal-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <h2 class="modal-title">Create account</h2>
+      <p class="modal-sub">Join Lexis AI to save your word discoveries</p>
+      <form onsubmit="register(event)">
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="regUsername" class="form-input" placeholder="choose a username" required minlength="3" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="regPassword" class="form-input" placeholder="min. 6 characters" required minlength="6" />
+        </div>
+        <div id="regError" class="form-error hidden"></div>
+        <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+      </form>
+      <p class="modal-footer">Already have one? <a href="#" onclick="switchModal('registerModal','loginModal')">Sign in</a></p>
+    </div>
+  </div>
+
+  <!-- Study Mode Modal -->
+  <div id="studyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="studyModalTitle">
+    <div class="modal-backdrop" onclick="hideStudyModal()"></div>
+    <div class="modal-card study-modal-card">
+      <button class="modal-close" type="button" onclick="hideStudyModal()" aria-label="Close">✕</button>
+      <h2 id="studyModalTitle" class="modal-title">Study Mode</h2>
+      <p class="study-progress">Card <span id="studyCurrentIndex">1</span> of <span id="studyTotalCards">0</span></p>
+      <div class="flashcard-container" id="flashcard" tabindex="0" role="button" aria-label="Flip card">
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <div class="flashcard-word" id="studyWordFront">Word</div>
+            <p class="click-hint">Tap to reveal definition</p>
+          </div>
+          <div class="flashcard-back">
+            <div class="flashcard-word small" id="studyWordBack">Word</div>
+            <p class="study-def" id="studyDefinitionBack">Definition</p>
+          </div>
+        </div>
+      </div>
+      <div class="study-controls">
+        <button class="btn btn-ghost" type="button" id="studyPrevBtn">Previous</button>
+        <button class="btn btn-primary" type="button" id="studyNextBtn">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="/js/app.js" defer></script>
 </body>
 </html>
